@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Chuyến Đi Thực Tế</title>
 <link rel="icon" href="assets/brand/sq_icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -22,6 +22,32 @@ canvas#c{display:block;image-rendering:pixelated;image-rendering:crisp-edges;bac
 #dlgHint{position:absolute;right:16px;bottom:8px;color:#e8c88a;font-size:24px;animation:bob .8s steps(2) infinite}
 @keyframes bob{50%{transform:translateY(3px)}}
 #cap{transition:opacity .6s}
+/* ---- điều khiển cảm ứng cho điện thoại ---- */
+body.touch{touch-action:none;overscroll-behavior:none}
+body.touch #volbar{display:none}
+#tc{position:fixed;inset:0;pointer-events:none;z-index:15}
+#tc.hide{display:none}
+#tc .tb{pointer-events:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;border-radius:50%;background:rgba(26,18,12,.55);border:2px solid rgba(232,193,90,.7);color:#f2e2c4;font-family:VT323,monospace;font-size:22px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;line-height:1;padding:0}
+#tc .tb.on{background:rgba(232,193,90,.75);color:#2a1c18}
+#tc .big{width:68px;height:68px;font-size:30px}
+#joy{position:absolute;left:max(18px,env(safe-area-inset-left,0px));bottom:max(18px,env(safe-area-inset-bottom,0px));width:128px;height:128px;border-radius:50%;background:rgba(26,18,12,.35);border:2px solid rgba(232,193,90,.45);pointer-events:auto;touch-action:none}
+#knob{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:rgba(232,193,90,.55);border:2px solid rgba(255,240,200,.8);pointer-events:none}
+#tbtns{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap-reverse;justify-content:flex-end;align-items:flex-end;gap:8px;max-width:200px}
+#tc .cmb,#tc .boss,#tc .surv,#tc .atk,#tc .map{display:none}
+#tc.combat .cmb,#tc.combat .atk,#tc.boss .boss,#tc.surv .surv,#tc.hasmap .map{display:flex}
+#dpad{display:none;position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));gap:10px} /* bên trái, không che vạch đích của mũi tên */
+#tc.dance #dpad{display:flex}#tc.dance #joy,#tc.dance #tbtns{display:none}
+#dpad .tb{width:62px;height:62px;font-size:30px;border-radius:12px}
+#tsys{position:absolute;left:max(18px,env(safe-area-inset-left,0px));bottom:calc(max(18px,env(safe-area-inset-bottom,0px)) + 140px);display:flex;gap:6px}
+#tc .sm{width:40px;height:40px;font-size:18px}
+#prompt .pk{pointer-events:auto}
+@media (max-height:520px),(max-width:720px){
+  #dlgTxt{font-size:19px!important;min-height:2.2em!important}#dlgWho{font-size:17px;top:-22px;padding:1px 10px 0}#dlg{padding:12px 12px 8px!important}#dlgHint{font-size:16px}
+  #pt{width:clamp(56px,13vw,96px)!important;bottom:calc(100% + 24px)}#prompt{font-size:17px;bottom:34%}#obj{font-size:14px}#obj .qm i{font-size:11px}#where{font-size:13px}
+  #bag,#paper{font-size:17px!important}#paper{padding:22px 24px!important}.note{font-size:14px}.note b{width:16px;height:16px;line-height:16px;font-size:12px}
+  #ui .text-6xl{font-size:38px}#ui .text-5xl{font-size:32px}#ui .text-4xl{font-size:26px}#ui .text-3xl{font-size:21px}#ui .text-2xl{font-size:17px}#ui .text-xl{font-size:15px}#ui>div{margin:8px;padding:14px}
+  #pause .pb{font-size:20px}#capBig{font-size:34px!important}#capSmall{font-size:20px!important}
+}
 #pause .pz{background:#2a1c18;border:4px solid #120a07;border-radius:8px;box-shadow:inset 0 0 0 3px #b07a4a,inset 0 0 0 5px #3a2418,6px 6px 0 #000;color:#f2e2c4;padding:22px 28px;min-width:min(360px,90vw);animation:uiIn .2s ease-out}
 #pause .pb{display:block;width:100%;text-align:left;font-size:26px;padding:2px 14px;border:2px solid #b07a4a;background:#3a2418;color:#f2e2c4;border-radius:4px;transition:background-color .1s,transform .06s}#pause .pb:hover,#pause .pb.sel{background:#e8c15a;color:#2a1c18}#pause .pb:active{transform:translate(2px,2px)}
 #pause input[type=range]{width:100%;accent-color:#e8c15a}
@@ -68,7 +94,7 @@ canvas#c{display:block;image-rendering:pixelated;image-rendering:crisp-edges;bac
     <div id="bag" class="hidden absolute inset-[6%] bg-black/90 border-4 border-amber-500 p-4 overflow-auto"></div>
   </div>
 </div>
-<div class="fixed top-1 right-1 z-20 bg-black/75 border border-stone-600 px-2 py-1 text-lg leading-none flex items-center gap-2 select-none">
+<div id="volbar" class="fixed top-1 right-1 z-20 bg-black/75 border border-stone-600 px-2 py-1 text-lg leading-none flex items-center gap-2 select-none">
   <button id="mute" class="text-xl" title="Tắt/bật tiếng (phím M)">🔊</button><span>Nhạc</span><input id="vm" type="range" min="0" max="100" class="w-16 accent-lime-400"><span>SFX</span><input id="vs" type="range" min="0" max="100" class="w-16 accent-amber-400">
 </div>
 <div id="ui" class="fixed inset-0 z-10 flex items-center justify-center bg-black/90 overflow-auto"></div>
@@ -1748,7 +1774,7 @@ function burnLeech() {
   const sv = F.sv; if (!sv || !sv.leech) return; if (!has('lighter')) { toast('Không có hộp quẹt!'); return; }
   cut(async () => { SFX.burn(); fl('Xèo...', P.x, P.y - 10, '#ffb347', 1.2); await wait(1.1); sv.hp = Math.max(1, sv.hp - 2); toast(`Đốt rụng ${sv.leech} con vắt`); sv.leech = 0; });
 }
-function aimAngle() { if (G.mouseUsed) return Math.atan2(G.my + cam.y - P.y, G.mx + cam.x - P.x); return Math.atan2(P.ldy || 0, P.ldx || P.face); }
+function aimAngle() { if (G.touch) { let best = null, bd = 230; for (const e of G.foes || []) if (!e.dead && !e.sub) { const d = Math.hypot(e.x - P.x, e.y - (e.hy || 0) - P.y); if (d < bd) { bd = d; best = e; } } if (best) return Math.atan2(best.y - (best.hy || 0) - P.y, best.x - P.x); return Math.atan2(P.ldy || 0, P.ldx || P.face); } if (G.mouseUsed) return Math.atan2(G.my + cam.y - P.y, G.mx + cam.x - P.x); return Math.atan2(P.ldy || 0, P.ldx || P.face); }
 function attack() {
   const sv = F.sv; if (!sv || G.busy || dlg || G.atkCd > 0 || G.state !== 'play') return; const w = sv.w, a = G.aim;
   if (w === 'knife') { G.atkCd = .38; G.slash = { a, t: .15 }; SFX.swish(); if ((G.foes || []).some(e => !e.dead && Math.hypot(e.x - P.x, e.y - P.y) < e.r + 18)) SFX.slice(); { const gx = (G.foes || []).find(e => e.kind === 'giao' && !e.dead && e.state === 'frozen'); if (gx && Math.min(Math.hypot(P.x - (gx.x + gx.face * 20), P.y - (gx.y - 6)), Math.hypot(P.x - gx.x, P.y - gx.y)) < 46) { gx.face = P.x > gx.x ? 1 : -1; cut(() => giaoExecute(gx)); return; } } for (const e of G.foes || []) { const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy); let da = Math.atan2(dy, dx) - a; while (da > Math.PI) da -= 6.283; while (da < -Math.PI) da += 6.283; if (d < e.r + 18 && Math.abs(da) < .9) hitFoe(e, (e.state === 'stun' ? 14 : 8) * dmgMul(e, 'knife'), e.x, e.y); } return; }
@@ -2277,6 +2303,7 @@ function showTitle() {
     <p class="text-2xl leading-tight mt-3 text-stone-300">13/6/2026. Bạn ngủ quên, trễ chuyến xe đi thực tế của lớp. Điểm đến đầu tiên: Khe Sanh, Quảng Trị.</p>
     <label class="block text-2xl mt-3">Tên nhân vật của bạn: <input id="nm" maxlength="14" value="${esc(store.get('name', ''))}" placeholder="vd: Ngân" class="bg-black border-2 border-stone-500 px-2 text-2xl w-48 outline-none focus:border-lime-400"></label>
     <div class="mt-4 flex flex-wrap gap-2"><button id="new" class="${BTN_P}">CHƠI MỚI</button>${sv && contOf(sv) ? `<button id="cont" class="${BTN}">${sv.scene === 'end12' ? 'Phần 2: Thảm sát ▶' : sv.scene === 'end3' ? 'Phần 3: Sinh tồn trong rừng ▶' : sv.scene === 'end4' ? 'Phần 4: Hang động và Form0saa ▶' : sv.scene === 'end5' ? 'Phần 4: vào phòng thí nghiệm ▶' : sv.scene === 'end6' ? 'Phần 5: Trở về ▶' : sv.scene === 'end7' ? 'Chơi lại Phần 5' : `Chơi tiếp (${esc(SC[sv.scene] ? SC[sv.scene].name : '')})`}</button>` : ''}</div><div class="text-2xl text-amber-300 mt-3 leading-none">Chọn phần chơi:</div><div id="pickRow" class="mt-1 flex flex-wrap gap-2">${PARTS.map((p, i) => `<button data-part="${i}" class="px-3 py-0.5 border-2 border-amber-600 bg-stone-900 hover:bg-amber-400 hover:text-black text-xl">${p[0]}</button>`).join('')}</div>
+    ${G.touch ? '<p class="text-xl text-amber-200 mt-3 leading-tight">📱 Xoay ngang điện thoại để chơi. Cần gạt bên trái để đi (đẩy sát mép để chạy), nút E để nói chuyện và xem đồ vật, ⚔ để đánh, ☰ để tạm dừng.</p>' : ''}
     <ul class="text-xl leading-tight mt-4 text-stone-300 list-disc pl-6"><li><b class="text-lime-300">WASD / mũi tên</b>: đi · <b class="text-lime-300">Shift</b>: chạy</li><li><b class="text-lime-300">E / Space / click</b>: tương tác, đọc tiếp hội thoại · <b class="text-lime-300">1 2 3</b>: chọn câu trả lời</li><li><b class="text-lime-300">Tab</b>: túi đồ và ghi chép · <b class="text-lime-300">M</b>: tắt tiếng</li></ul>
     <p class="text-lg text-stone-500 mt-4 leading-tight">Truyện hư cấu, làm để chơi trong nhóm bạn. Nhân vật, làng Tari và tổ chức Form0saa là hư cấu. Thông tin lịch sử về Khe Sanh và Tà Cơn lấy theo báo chí.</p>`);
   const start = sceneId => { NAME = ($('nm').value || '').trim() || 'Bạn'; store.set('name', NAME); startScene(sceneId); };
@@ -2341,6 +2368,30 @@ function showEndPart() {
     <button id="p3" class="${BTN_P} mt-4">Phần 2: Thảm sát ▶</button> <button id="menu" class="${BTN} mt-4">Màn hình chính</button>`);
   $('menu').onclick = showTitle; $('p3').onclick = () => startScene('massacre');
 }
+function setupTouch() { // cần điều khiển ảo + nút bấm, tự ẩn hiện theo tình huống
+  G.touch = 1; document.body.classList.add('touch');
+  const el = document.createElement('div'); el.id = 'tc'; el.className = 'hide';
+  el.innerHTML = `<div id="joy"><div id="knob"></div></div>
+    <div id="tbtns"><button data-k="KeyE" class="tb big" aria-label="Tương tác">E</button><button data-k="KeyJ" class="tb big atk" aria-label="Đánh, bắn">⚔</button>
+      <button data-k="KeyQ" class="tb cmb" aria-label="Đổi vũ khí">Q</button><button data-k="KeyR" class="tb cmb" aria-label="Nạp đạn">R</button><button data-k="KeyK" class="tb boss" aria-label="Đức khấn">🙏</button>
+      <button data-k="KeyH" class="tb surv" aria-label="Băng bó, hồi máu">H</button><button data-k="KeyL" class="tb surv" aria-label="Đốt vắt">L</button><button data-k="KeyF" class="tb surv" aria-label="Đèn pin">🔦</button></div>
+    <div id="dpad"><button data-k="ArrowLeft" class="tb">←</button><button data-k="ArrowDown" class="tb">↓</button><button data-k="ArrowUp" class="tb">↑</button><button data-k="ArrowRight" class="tb">→</button></div>
+    <div id="tsys"><button data-k="Tab" class="tb sm" aria-label="Túi đồ">🎒</button><button data-k="KeyB" class="tb sm map" aria-label="Bản đồ">🗺</button><button data-k="Escape" class="tb sm" aria-label="Tạm dừng">☰</button></div>`;
+  document.body.appendChild(el);
+  const send = (type, code) => dispatchEvent(new KeyboardEvent(type, { code, key: '' }));
+  el.querySelectorAll('[data-k]').forEach(b => { const k = b.dataset.k;
+    b.addEventListener('pointerdown', e => { e.preventDefault(); initAudio(); try { b.setPointerCapture(e.pointerId); } catch (_) {} b.classList.add('on'); send('keydown', k); });
+    const up = () => { if (!b.classList.contains('on')) return; b.classList.remove('on'); send('keyup', k); }; b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); });
+  const joy = $('joy'), knob = $('knob'); let jid = null;
+  const setDir = (dx, dy) => { const r = joy.clientWidth / 2, d = Math.hypot(dx, dy), m = Math.min(d, r * .62), dead = r * .22; knob.style.transform = d ? `translate(${dx / d * m}px,${dy / d * m}px)` : '';
+    const ax = Math.abs(dx), ay = Math.abs(dy); keys.KeyA = dx < -dead && ax > ay * .45; keys.KeyD = dx > dead && ax > ay * .45; keys.KeyW = dy < -dead && ay > ax * .45; keys.KeyS = dy > dead && ay > ax * .45; keys.ShiftLeft = d > r * .85; }; // đẩy ra sát mép = chạy
+  const mv = e => { if (e.pointerId !== jid) return; const b = joy.getBoundingClientRect(); setDir(e.clientX - b.left - b.width / 2, e.clientY - b.top - b.height / 2); };
+  joy.addEventListener('pointerdown', e => { e.preventDefault(); initAudio(); jid = e.pointerId; try { joy.setPointerCapture(jid); } catch (_) {} mv(e); });
+  joy.addEventListener('pointermove', mv); const end = e => { if (e.pointerId !== jid) return; jid = null; setDir(0, 0); }; joy.addEventListener('pointerup', end); joy.addEventListener('pointercancel', end);
+  $('prompt').addEventListener('pointerdown', e => { e.preventDefault(); send('keydown', 'KeyE'); send('keyup', 'KeyE'); }); // chạm vào khung gợi ý cũng tương tác được
+  setInterval(() => { const play = G.state === 'play' && !G.paused; el.classList.toggle('hide', !play); el.classList.toggle('dance', !!G.mini); el.classList.toggle('combat', !!(S && S.combat && F.sv)); el.classList.toggle('surv', !!(S && S.surv && F.sv)); el.classList.toggle('boss', !!bossActive()); el.classList.toggle('hasmap', has('map')); if (!play && jid == null) setDir(0, 0); }, 150);
+}
+if (matchMedia('(pointer: coarse)').matches || /[?&]touch/.test(location.search)) setupTouch();
 syncVol(); showTitle();
 })();
 </script>
